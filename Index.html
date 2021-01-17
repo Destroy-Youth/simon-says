@@ -105,10 +105,12 @@
       class Juego {
         constructor() {
           this.secuencia = [];
+          this.playerStep = 0;
           this.inicializar();
         }
 
         inicializar() {
+          this.elegirColor = this.elegirColor.bind(this);
           btnEmpezar.classList.add("hide");
           this.colores = {
             celeste,
@@ -116,14 +118,42 @@
             naranja,
             verde,
           };
-          this.nuevoPaso();
-          this.nuevoPaso();
-          this.nuevoPaso();
-          this.nuevoPaso();
-          this.nuevoPaso();
-          this.nuevoPaso();
+          this.siguientenivel();
+          this.addClickEvents();
+        }
+
+        siguientenivel() {
           this.nuevoPaso();
           this.iluminarSecuencia();
+        }
+
+        addClickEvents() {
+          this.colores.celeste.addEventListener("click", this.elegirColor);
+          this.colores.naranja.addEventListener("click", this.elegirColor);
+          this.colores.verde.addEventListener("click", this.elegirColor);
+          this.colores.violeta.addEventListener("click", this.elegirColor);
+        }
+
+        removeClickEvents() {
+          this.colores.celeste.removeEventListener("click", this.elegirColor);
+          this.colores.naranja.removeEventListener("click", this.elegirColor);
+          this.colores.verde.removeEventListener("click", this.elegirColor);
+          this.colores.violeta.removeEventListener("click", this.elegirColor);
+        }
+
+        elegirColor(ev) {
+          const color = ev.target.dataset.color;
+          const colorNum = this.colorANumero(color);
+          this.iluminarColor(colorNum);
+          if (colorNum === this.secuencia[this.playerStep]) {
+            this.playerStep++;
+            if (this.playerStep === this.secuencia.length) {
+              this.playerStep = 0;
+              setTimeout(() => this.siguientenivel(), 1500);
+            }
+          } else {
+            this.terminarJuego();
+          }
         }
 
         nuevoPaso() {
@@ -150,6 +180,25 @@
           }
         }
 
+        colorANumero(color) {
+          switch (color) {
+            case "celeste":
+              return 0;
+              break;
+            case "violeta":
+              return 1;
+              break;
+            case "naranja":
+              return 2;
+              break;
+            case "verde":
+              return 3;
+              break;
+            default:
+              break;
+          }
+        }
+
         iluminarColor(step) {
           let color = this.numeroAColor(step);
           this.colores[color].classList.add("light");
@@ -165,6 +214,10 @@
             console.log("iluminando " + this.numeroAColor(step));
             setTimeout(() => this.iluminarColor(step), 1000 * i);
           });
+        }
+
+        terminarJuego() {
+          alert(`Alcanzaste el nivel ${this.secuencia.length}`);
         }
       }
 

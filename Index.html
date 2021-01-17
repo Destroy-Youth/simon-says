@@ -106,11 +106,12 @@
         constructor() {
           this.secuencia = [];
           this.playerStep = 0;
+          this.elegirColor = this.elegirColor.bind(this);
+          this.addClickEvents = this.addClickEvents.bind(this);
           this.inicializar();
         }
 
         inicializar() {
-          this.elegirColor = this.elegirColor.bind(this);
           btnEmpezar.classList.add("hide");
           this.colores = {
             celeste,
@@ -119,15 +120,17 @@
             verde,
           };
           this.siguientenivel();
-          this.addClickEvents();
         }
 
         siguientenivel() {
+          this.removeClickEvents();
           this.nuevoPaso();
           this.iluminarSecuencia();
+          setTimeout(this.addClickEvents, 1000 * this.secuencia.length);
         }
 
         addClickEvents() {
+          console.log("activado");
           this.colores.celeste.addEventListener("click", this.elegirColor);
           this.colores.naranja.addEventListener("click", this.elegirColor);
           this.colores.verde.addEventListener("click", this.elegirColor);
@@ -135,6 +138,7 @@
         }
 
         removeClickEvents() {
+          console.log("desactivado");
           this.colores.celeste.removeEventListener("click", this.elegirColor);
           this.colores.naranja.removeEventListener("click", this.elegirColor);
           this.colores.verde.removeEventListener("click", this.elegirColor);
@@ -152,7 +156,7 @@
               setTimeout(() => this.siguientenivel(), 1500);
             }
           } else {
-            this.terminarJuego();
+            this.reiniciarJuego();
           }
         }
 
@@ -211,13 +215,15 @@
 
         iluminarSecuencia() {
           this.secuencia.forEach((step, i) => {
-            console.log("iluminando " + this.numeroAColor(step));
             setTimeout(() => this.iluminarColor(step), 1000 * i);
           });
         }
 
-        terminarJuego() {
+        reiniciarJuego() {
           alert(`Alcanzaste el nivel ${this.secuencia.length}`);
+          this.secuencia = [];
+          this.playerStep = 0;
+          btnEmpezar.classList.remove("hide");
         }
       }
 
